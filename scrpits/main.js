@@ -118,15 +118,43 @@ function centerMarker() {
 
 // creates the markers and lets you click on the marker for more info
 function createMarker(place) {
-  let marker = new google.maps.Marker({
-    position: place.geometry.location,
-    map: map
-  });
-  google.maps.event.addListener(marker, 'click', function() {
-    infoWindow.setContent(place.name);
-    infoWindow.open(map, this);
+
+  let infowindow = new google.maps.InfoWindow();
+  let service = new google.maps.places.PlacesService(map);
+
+  service.getDetails({
+    placeId: place.place_id
+  }, function(place, status) {
+    if (status === google.maps.places.PlacesServiceStatus.OK) {
+      let marker = new google.maps.Marker({
+        position: place.geometry.location,
+        map: map
+      });
+      google.maps.event.addListener(marker, 'click', function() {
+        let space = '&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp'
+        infowindow.setContent('<div><strong>' + place.name + '</strong><br>' +
+          'Address: ' + place.formatted_address + '<br>' +
+          'Raiting: ' + place.rating + '<br>' + 'Phone: '+ place.formatted_phone_number + '<br>' + 'Open Hours: '+ place.opening_hours.weekday_text[0] + '<br>' + space + place.opening_hours.weekday_text[1] + '<br>' + space + place.opening_hours.weekday_text[2] + '<br>' + space + place.opening_hours.weekday_text[3] + '<br>' + space + place.opening_hours.weekday_text[4] + '<br>' + space + place.opening_hours.weekday_text[6] + '<br>' + '</div>');
+        infowindow.open(map, this);
+      });
+    }
   });
 }
+
+// function createMarker(place) {
+//   let marker = new google.maps.Marker({
+//     position: place.geometry.location,
+//     name: place.name,
+//     map: map
+//   });
+//
+//   google.maps.event.addListener(marker, 'click', function() {
+//     infoWindow.setContent('<div><strong>' + place.name + '</strong><br>' +
+//                 'Place ID: ' + place.place_id + '<br>' +
+//                 place.formatted_address + '</div>');
+//     infoWindow.open(map, this);
+//   });
+// }
 
 //calculate distance
 function distanceLocation(distance) {
