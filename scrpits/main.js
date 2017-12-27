@@ -167,7 +167,7 @@ function equivdistCalc() {
   }
   searchResults.sort((a, b) => {return a.equivdist - b.equivdist;});
 
-  accordPopulate();
+  app.view.accordPopulate();
   checkSearchResultIsNone();
 }
 

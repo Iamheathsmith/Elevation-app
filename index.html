@@ -1,107 +1,97 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-  <title>Geolocation</title>
-  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-  <meta charset="utf-8">
-  <link href="https://fonts.googleapis.com/css?family=Josefin+Sans" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href=styles/reset.css>
-  <link rel="stylesheet" type="text/css" href=styles/base.css>
-  <link rel="stylesheet" type="text/css" href="styles/layout.css">
-  <link rel="stylesheet" type="text/css" href="styles/module.css">
-  <link rel="stylesheet" type="text/css" href="styles/icons/style.css">
-  <link rel="stylesheet" type="text/css" href="styles/hamburger.css">
-  <title>Elevation Info</title>
+  <head>
+    <title>Geolocation</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href=styles/reset.css>
+    <link rel="stylesheet" type="text/css" href=styles/base.css>
+    <link rel="stylesheet" type="text/css" href="styles/layout.css">
+    <link rel="stylesheet" type="text/css" href="styles/module.css">
+    <link rel="stylesheet" type="text/css" href="styles/icons/style.css">
+    <link rel="stylesheet" type="text/css" href="styles/hamburger.css">
+    <title>Elevation Info</title>
 
-  <script id="results-template" type="text/x-handlebars-template">
+    <script id="results-template" type="text/x-handlebars-template">
 
-    <button class="accordion"><h1>{{name}}</h1>
-  <label class="section-name">Distance to location: {{equivdist}} Miles</label></button>
-    <div class="panel">
-      <div><img class="search-img" src="{{imgUrl}}"></div>
-      <div class="line-info"><span class="icon-office"></span><a href="https://www.google.com/maps/?q={{address}}">{{address}}</a></div>
-      <div class="line-info"><span class="icon-arrow-up-right2"></span>
-        <h2> The elevation difference is: {{elevationcomp}} feet</h2></div>
-      <div class="line-info"><span class="last-div icon-bullhorn"></span>
-        <h2> Rating: {{rating}}</h2></div>
-    </div>
-  </script>
+      <button class="accordion"><h1>{{name}}</h1>
+    <label class="section-name">Distance to location: {{equivdist}} Miles</label></button>
+      <div class="panel">
+        <div><img class="search-img" src="{{imgUrl}}"></div>
+        <div class="line-info"><span class="icon-office"></span><a href="https://www.google.com/maps/?q={{address}}">{{address}}</a></div>
+        <div class="line-info"><span class="icon-arrow-up-right2"></span>
+          <h2> The elevation difference is: {{elevationcomp}} feet</h2></div>
+        <div class="line-info"><span class="last-div icon-bullhorn"></span>
+          <h2> Rating: {{rating}}</h2></div>
+      </div>
+    </script>
 
-</head>
+  </head>
 
-<header>
-  <section class="header-bar">
-    <div class="logo-area">
-      <img id="logo" src="img/FINAL1.jpeg">
-    </div>
-    <div id="saying">
-      <h4>Elevate your search!</h4>
-    </div>
-  </section>
-
-  <div class="bg-cover" class="none"></div>
-
-    <a class="hamburger-shell">
-      <div class="hamb top menu"></div>
-      <div class="hamb middle"></div>
-      <div class="menu-name">MENU</div>
-      <ul id="menu">
-        <a class="home">
-          <li>Home</li>
-        </a>
-        <a class="searchHistory">
-          <li>Past Search</li>
-        </a>
-        <a class="about">
-          <li>About Us</li>
-        </a>
-      </ul>
-    </a>
-
-</header>
-
-<body>
-  <main>
-    <section class="main container">
-      <h5 id="info">Hey! This is Eazy Walk here you can search for anything from a coffee shop to a small business to find the most efficient route</h5>
-      <form id="search-from">
-        <input id="search" autocomplete="off" placeholder="Search Here">
-        <button id="search-btn">Start your Search</button>
-      </form>
+  <header>
+    <section class="header-bar">
+      <div class="logo-area">
+        <img id="logo" src="img/FINAL1.jpeg">
+      </div>
+      <div id="saying">
+        <h4>Elevate your search!</h4>
+      </div>
     </section>
-  <!-- </main> -->
 
-  <div id="searchHistory" class="container"></div>
-  <!-- for the loading image of pokemon -->
-  <div>
-    <img id="pokemon" class="container" src="img/loading.gif">
-  </div>
+    <div class="bg-cover" class="none"></div>
+      <a class="hamburger-shell">
+        <div class="hamb top menu"></div>
+        <div class="hamb middle"></div>
+        <div class="menu-name">MENU</div>
+        <ul id="menu">
+          <a class="home">
+            <li>Home</li>
+          </a>
+          <a class="searchHistory">
+            <li>Past Search</li>
+          </a>
+          <a class="about">
+            <li>About Us</li>
+          </a>
+        </ul>
+      </a>
+  </header>
 
-  <!-- for search results -->
-  <section>
-    <div class="search-details container"></div>
+  <body>
+    <main>
+      <section class="main container">
+        <h5 id="info">Hey! This is Eazy Walk here you can search for anything from a coffee shop to a small business to find the most efficient route</h5>
+        <form id="search-from">
+          <input id="search" autocomplete="off" placeholder="Search Here">
+          <button id="search-btn">Start your Search</button>
+        </form>
+      </section>
 
-    <!-- for side image at desktop view -->
-    <div>
-      <img id="side-image" class="container" src="img/rain.gif">
-    </div>
+      <div id="searchHistory" class="container"></div>
 
-    <!-- div for the map image -->
-    <!-- <div id="map" class="container"></div> -->
-  </section>
-</main>
+      <div>
+        <img id="pokemon" class="container" src="img/loading.gif">
+      </div>
 
-<!-- div for the map image -->
-<div id="map" class="container"></div>
+      <div class="search-details container"></div>
+
+      <div>
+        <img id="side-image" class="container" src="img/rain.gif">
+      </div>
+
+    </main>
+
+    <div id="map" class="container"></div>
 
 
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCFvCBTC4gncWVqiOHfjbPWRQsmI9DXFP4&libraries=places"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
-  <script type="text/javascript" src="scrpits/views.js"></script>
-  <script type="text/javascript" src="scrpits/map.js"></script>
-  <script type="text/javascript" src="scrpits/main.js"></script>
-</body>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCFvCBTC4gncWVqiOHfjbPWRQsmI9DXFP4&libraries=places"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
+    <script type="text/javascript" src="scrpits/views.js"></script>
+    <script type="text/javascript" src="scrpits/map.js"></script>
+    <script type="text/javascript" src="scrpits/main.js"></script>
+  </body>
 
 </html>
