@@ -1,0 +1,110 @@
+.hamburger-shell {
+    margin: 5;
+    position: fixed;
+    overflow: hidden;
+    width: 70px;
+    height: 70px;
+    overflow: auto;
+    left: calc(100% - 50px);
+    top: 0px;
+}
+
+.menu-name:hover {
+  color: red;
+  cursor: pointer;
+}
+
+.top, .middle{
+    position: absolute;
+    width: 33px;
+    height: 5px;
+    background-color: black;
+    transition: all 350ms ease-in-out;
+    top: 50px;
+}
+
+.middle {
+    top: 40px;
+}
+
+#menu {
+    position: fixed;
+    left: calc(100% - 250px);
+    top: -110px;
+    color: black;
+    display: none;
+    margin: 165px;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+    font-weight: 60;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #333;
+    padding: 35px;
+    width: 35px;
+    text-align: left;
+}
+
+#menu a li {
+    text-decoration: none!important;
+    padding-bottom: 1px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid black;
+    list-style: none;
+    color: #555;
+    transition: all 150ms ease;
+}
+
+#menu a li:hover {
+    color: #00abff;
+    padding-right: 3px;
+}
+
+#menu a li:hover:after {
+}
+
+
+
+#menu a {
+    text-decoration: none;
+}
+
+.rotate {
+    transform: rotate(225deg);
+    -webkit-transform: rotate(225deg);
+    top: 30px;
+    background-color: red;
+    height: 2px;
+}
+
+.rotate-back {
+    transform: rotate(-225deg);
+    -webkit-transform: rotate(-225deg);
+    top: 30px;
+    background-color: red;
+    height: 2px;
+}
+
+.top {
+-webkit-animation-delay: 100ms;
+}
+
+.middle {
+-webkit-animation-delay: 250ms;
+}
+
+.bottom {
+    -webkit-animation-delay: 400ms;
+}
+
+ .menu-name {
+    font-family: Verdana;
+    font-weight: 900;
+    color: black;
+    font-size: 11px;
+    text-decoration: none;
+    position: absolute;
+    top: 56px;
+    left: -1px;
+    transition: all 350ms;
+}
