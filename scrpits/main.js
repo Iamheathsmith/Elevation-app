@@ -7,14 +7,15 @@ let des = [];
 let elevPos = {};
 let statusE = false;
 let statusD = false;
+let hours = [];
 
 localStorage.setItem('searchHistory','');
 let searchResults = [];
 
-function SearchResultsObject(name, add, openh, dis, duration, ele, rating, elecomp, imgUrl,ed) {
+function SearchResultsObject(name, add, hours, dis, duration, ele, rating, elecomp, imgUrl,ed) {
   this.name = name;
   this.address = add;
-  this.openNow = openh
+  this.storeHours = hours
   this.distance = dis;
   this.duration = duration;
   this.elevation = ele;
@@ -65,7 +66,7 @@ function initMap(e) {
 
         // For every input log to History Tab
         let now = Date().split(' ').slice(0, 5).join(' ');
-//        searchHistory += `${now}- ${$('#search').val()} <br> `;
+        //searchHistory += `${now}- ${$('#search').val()} <br> `;
         localStorage.searchHistory += `${now}- ${$('#search').val()} <br> `;
 
         let service = new google.maps.places.PlacesService(map);
@@ -94,7 +95,6 @@ function processResults(results, status) {
       })
       searchResults.push(new SearchResultsObject(results[i].name, results[i].vicinity, null, 0, 0, 0, results[i].rating,0));
       searchResults[i].imgUrl = (results[i].photos) ? results[i].photos[0].getUrl({maxWidth: 1000}) : 'img/error.gif';
-      searchResults[i].openNow = (!results[i].opening_hours) ? 'Not Available' : (results[i].opening_hours.open_now === true ? 'yes' : 'no');
     }
     console.log(results);
   }
@@ -117,9 +117,10 @@ function centerMarker() {
 }
 
 // creates the markers and lets you click on the marker for more info
+
 function createMarker(place) {
-  let infoWindow = new google.maps.InfoWindow();
   let service = new google.maps.places.PlacesService(map);
+  let infoWindow = new google.maps.InfoWindow();
 
   service.getDetails({
     placeId: place.place_id
@@ -127,15 +128,23 @@ function createMarker(place) {
     if (status === google.maps.places.PlacesServiceStatus.OK) {
       let marker = new google.maps.Marker({
         position: place.geometry.location,
-        map: map
+        map: map,
       });
-      infoWindow.setContent('<div id="name">' + place.name + '</div><br>' +
+      // console.log(place);
+      let today = new Date();
+      let weekday = today.getDay();
+      infoWindow.setContent('<div id="name">' + place.name + '</div>' +
         'Address: ' + place.formatted_address + '<br>' +
-        'Raiting: ' + place.rating + '<br>' + 'Phone: '+ place.formatted_phone_number + '<br>' + '</div>');
+        'Hours: ' + place.opening_hours.weekday_text[weekday] + '<br>' + 'Phone: '+ place.formatted_phone_number + '<br>' + '</div>');
 
-      google.maps.event.addListener(marker, 'click', function() {
+      google.maps.event.addListener(marker, 'click', function(event) {
         infoWindow.open(map, marker);
       });
+
+      google.maps.event.addListener(map, 'click', function(event) {
+        infoWindow.close();
+      });
+      hours.push(place.opening_hours.weekday_text[weekday]);
     }
   });
 }
@@ -176,6 +185,7 @@ function equivdistCalc() {
   for (let i = 0; i < searchResults.length; i++) {
     let naismith_ed = ((((searchResults[i].distance*1.6) + (7.92*Math.abs(searchResults[i].elevationcomp*.3048/1000))))*0.62);
     searchResults[i].equivdist = Number(naismith_ed.toPrecision(2));
+    searchResults[i].storeHours = hours[i];
   }
   searchResults.sort((a, b) => {return a.equivdist - b.equivdist;});
 
