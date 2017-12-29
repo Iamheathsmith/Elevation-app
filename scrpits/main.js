@@ -129,11 +129,12 @@ function createMarker(place) {
         position: place.geometry.location,
         map: map
       });
+      infoWindow.setContent('<div id="name">' + place.name + '</div><br>' +
+        'Address: ' + place.formatted_address + '<br>' +
+        'Raiting: ' + place.rating + '<br>' + 'Phone: '+ place.formatted_phone_number + '<br>' + '</div>');
+
       google.maps.event.addListener(marker, 'click', function() {
-        infoWindow.setContent('<div><strong>' + place.name + '</strong></div><br>' +
-          'Address: ' + place.formatted_address + '<br>' +
-          'Raiting: ' + place.rating + '<br>' + 'Phone: '+ place.formatted_phone_number + '<br>' + '</div>');
-        infoWindow.open(map, this);
+        infoWindow.open(map, marker);
       });
     }
   });
