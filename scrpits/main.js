@@ -130,10 +130,12 @@ function createMarker(place) {
         position: place.geometry.location,
         map: map,
       });
-      console.log(place);
+      // console.log(place);
       let infoWindow = new google.maps.InfoWindow();
       let today = new Date();
-      let weekday = (today.getDay() - 1);
+      let weekday = today.getDay() || 7-1;
+      // console.log(today);
+      // console.log(weekday);
       let hourTest = (place.opening_hours) ? (place.opening_hours.weekday_text[weekday]) : 'No Hours Provided'
 
       infoWindow.setContent('<div id="name">' + place.name + '</div>' +
