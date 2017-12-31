@@ -94,9 +94,9 @@ function processResults(results, status) {
         lng: results[i].geometry.location.lng()
       })
       searchResults.push(new SearchResultsObject(results[i].name, results[i].vicinity, null, 0, 0, 0, results[i].rating,0));
-      searchResults[i].imgUrl = (results[i].photos) ? results[i].photos[0].getUrl({maxWidth: 1000}) : 'img/error.gif';
+      searchResults[i].imgUrl = (results[i].photos) ? results[i].photos[0].getUrl({maxWidth: 1000}) : 'img/Sorry-Image-Not-Available.png';
     }
-    console.log(results);
+    // console.log(results);
   }
   let distance = new google.maps.DistanceMatrixService;
   statusD = distanceLocation(distance);
@@ -120,7 +120,7 @@ function centerMarker() {
 
 function createMarker(place) {
   let service = new google.maps.places.PlacesService(map);
-  let infoWindow = new google.maps.InfoWindow();
+  // let infoWindow = new google.maps.InfoWindow();
 
   service.getDetails({
     placeId: place.place_id
@@ -130,12 +130,15 @@ function createMarker(place) {
         position: place.geometry.location,
         map: map,
       });
-      // console.log(place);
+      console.log(place);
+      let infoWindow = new google.maps.InfoWindow();
       let today = new Date();
-      let weekday = today.getDay();
+      let weekday = (today.getDay() - 1);
+      let hourTest = (place.opening_hours) ? (place.opening_hours.weekday_text[weekday]) : 'No Hours Provided'
+
       infoWindow.setContent('<div id="name">' + place.name + '</div>' +
         'Address: ' + place.formatted_address + '<br>' +
-        'Hours: ' + place.opening_hours.weekday_text[weekday] + '<br>' + 'Phone: '+ place.formatted_phone_number + '<br>' + '</div>');
+        'Hours: ' + hourTest + '<br>' + 'Phone: '+ place.formatted_phone_number + '<br>' + '</div>');
 
       google.maps.event.addListener(marker, 'click', function(event) {
         infoWindow.open(map, marker);
@@ -144,7 +147,8 @@ function createMarker(place) {
       google.maps.event.addListener(map, 'click', function(event) {
         infoWindow.close();
       });
-      hours.push(place.opening_hours.weekday_text[weekday]);
+
+      hours.push(hourTest);
     }
   });
 }
