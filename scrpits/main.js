@@ -8,6 +8,7 @@ let elevPos = {};
 let statusE = false;
 let statusD = false;
 let hours = [];
+let placeId = []
 
 localStorage.setItem('searchHistory','');
 let searchResults = [];
@@ -59,7 +60,7 @@ function initMap(e) {
           location: pos,
           // rankBy: google.maps.places.RankBy.DISTANCE,
           radius: '800', //in meters
-          // name: [$('#search-name').val()],//search by name
+          // name: [$('#search').val()],//search by name
           // type: [$('#search-type').val()],// search by type
           keyword: [$('#search').val()]// search by keyword
         };
@@ -88,10 +89,11 @@ function initMap(e) {
 function processResults(results, status) {
   if (status === google.maps.places.PlacesServiceStatus.OK) {
     for (let i = 0; i < results.length; i++) {
+      placeId.push(results[i].place_id)
       createMarker(results[i])
       des.push({
         lat: results[i].geometry.location.lat(),
-        lng: results[i].geometry.location.lng()
+        lng: results[i].geometry.location.lng(),
       })
       searchResults.push(new SearchResultsObject(results[i].name, results[i].vicinity, null, 0, 0, 0, results[i].rating,0));
       searchResults[i].imgUrl = (results[i].photos) ? results[i].photos[0].getUrl({maxWidth: 1000}) : 'img/Sorry-Image-Not-Available.png';
@@ -120,7 +122,7 @@ function centerMarker() {
 
 function createMarker(place) {
   let service = new google.maps.places.PlacesService(map);
-  // let infoWindow = new google.maps.InfoWindow();
+  let infoWindow = new google.maps.InfoWindow();
 
   service.getDetails({
     placeId: place.place_id
@@ -131,16 +133,13 @@ function createMarker(place) {
         map: map,
       });
       // console.log(place);
-      let infoWindow = new google.maps.InfoWindow();
       let today = new Date();
       let weekday = today.getDay() || 7-1;
-      // console.log(today);
-      // console.log(weekday);
       let hourTest = (place.opening_hours) ? (place.opening_hours.weekday_text[weekday]) : 'No Hours Provided'
-
       infoWindow.setContent('<div id="name">' + place.name + '</div>' +
         'Address: ' + place.formatted_address + '<br>' +
         'Hours: ' + hourTest + '<br>' + 'Phone: '+ place.formatted_phone_number + '<br>' + '</div>');
+
 
       google.maps.event.addListener(marker, 'click', function(event) {
         infoWindow.open(map, marker);
@@ -161,12 +160,12 @@ function distanceLocation(distance) {
     distance.getDistanceMatrix({
       origins: [pos],
       destinations: [des[i]],
-      travelMode: google.maps.TravelMode.DRIVING,
+      travelMode: google.maps.TravelMode.WALKING,
       unitSystem: google.maps.UnitSystem.IMPERIAL,
     }, function(results, err){
       searchResults[i].distance =  Number((results.rows[0].elements[0].distance.text).substr(0,(results.rows[0].elements[0].distance.text).length-3));
       searchResults[i].duration =  Number((results.rows[0].elements[0].duration.text).substr(0,(results.rows[0].elements[0].duration.text).length-5));
-      if (i == searchResults.length) {statusD = true;} ;
+      if (i == searchResults.length) {statusD = true;}
     })
   }
   return statusD;
