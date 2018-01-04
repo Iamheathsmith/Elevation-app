@@ -25,7 +25,6 @@ function SearchResultsObject(name, add, hours, dis, duration, ele, rating, eleco
   this.equivdist = ed;
 }
 
-// this.distance + (7.92*this.elecomp)
 function initMap(e) {
   e.preventDefault();
 
@@ -48,10 +47,9 @@ function initMap(e) {
         getElevationPos(elevator);
 
         function getElevationPos(elevator) {
-          // Initiate the location request
           elevator.getElevationForLocations({
             locations: [pos],
-          }, function(response, err) {
+          }, function(response) {
             elevPos = (Math.floor(response[0].elevation*3.28))
           })
         }
@@ -60,8 +58,6 @@ function initMap(e) {
           location: pos,
           rankBy: google.maps.places.RankBy.DISTANCE,
           // radius: '800', //in meters
-          // name: [$('#search').val()],//search by name
-          // type: [$('#search-type').val()],// search by type
           keyword: [$('#search').val()]// search by keyword
         };
 
@@ -104,7 +100,7 @@ function processResults(results, status) {
   let elevator = new google.maps.ElevationService;
   statusE = displayLocationElevation(elevator);
 
-  setTimeout(equivdistCalc, 3000);
+  setTimeout(equivdistCalc, 500);
 }
 
 function centerMarker() {
@@ -117,8 +113,6 @@ function centerMarker() {
   map.setCenter(pos);
 }
 
-// creates the markers and lets you click on the marker for more info
-
 function createMarker(place) {
   let service = new google.maps.places.PlacesService(map);
   let infoWindow = new google.maps.InfoWindow();
@@ -126,15 +120,16 @@ function createMarker(place) {
   service.getDetails({
     placeId: place.place_id
   }, function(place, status) {
+    let today = new Date();
+    let weekday = !today.getDay() ? 6 : today.getDay() - 1;
+    let hourTest = (place.opening_hours) ? (place.opening_hours.weekday_text[weekday]) : 'No Hours Provided'
+    hours.push(hourTest);
     if (status === google.maps.places.PlacesServiceStatus.OK) {
       let marker = new google.maps.Marker({
         position: place.geometry.location,
         map: map,
       });
       // console.log(place);
-      let today = new Date();
-      let weekday = !today.getDay() ? 6 : today.getDay() - 1;
-      let hourTest = (place.opening_hours) ? (place.opening_hours.weekday_text[weekday]) : 'No Hours Provided'
       infoWindow.setContent('<div id="name">' + place.name + '</div>' +
         'Address: ' + place.formatted_address + '<br>' +
         'Hours: ' + hourTest + '<br>' + 'Phone: '+ place.formatted_phone_number + '<br>' + '</div>');
@@ -146,8 +141,6 @@ function createMarker(place) {
       google.maps.event.addListener(map, 'click', function(event) {
         infoWindow.close();
       });
-
-      hours.push(hourTest);
     }
   });
 }
@@ -160,10 +153,10 @@ function distanceLocation(distance) {
       destinations: [des[i]],
       travelMode: google.maps.TravelMode.WALKING,
       unitSystem: google.maps.UnitSystem.IMPERIAL,
-    }, function(results, err){
-      searchResults[i].distance =  Number((results.rows[0].elements[0].distance.text).substr(0,(results.rows[0].elements[0].distance.text).length-3));
-      searchResults[i].duration =  Number((results.rows[0].elements[0].duration.text).substr(0,(results.rows[0].elements[0].duration.text).length-5));
-      if (i == searchResults.length) {statusD = true;}
+    }, function(results) {
+      searchResults[i].distance = Number((results.rows[0].elements[0].distance.text).substr(0,(results.rows[0].elements[0].distance.text).length-3));
+      searchResults[i].duration = Number((results.rows[0].elements[0].duration.text).substr(0,(results.rows[0].elements[0].duration.text).length-5));
+      if (i === searchResults.length) {statusD = true;}
     })
   }
   return statusD;
@@ -174,13 +167,22 @@ function displayLocationElevation(elevator) {
   for (let i = 0; i < searchResults.length; i++) {
     elevator.getElevationForLocations({
       locations: [des[i]],
-    }, function(response, err){
-      searchResults[i].elevation =  Math.floor(response[0].elevation*3.28);
+    }, function(response) {
+      searchResults[i].elevation = Math.floor(response[0].elevation*3.28);
       searchResults[i].elevationcomp = searchResults[i].elevation - elevPos;
-      if (i == searchResults.length) {statusE = true;}
+      if (i === searchResults.length) {statusE = true;}
     });
   }
   return statusE;
+}
+
+// removing items that are over .6 miles away
+function removeItems() {
+  for (let i = 0; i < searchResults.length; i++) {
+    if (searchResults[i].equivdist > 0.6) {
+      searchResults.splice(i);
+    }
+  }
 }
 
 // applying Naismiths formula
@@ -191,7 +193,7 @@ function equivdistCalc() {
     searchResults[i].storeHours = hours[i];
   }
   searchResults.sort((a, b) => {return a.equivdist - b.equivdist;});
-
+  removeItems();
   app.view.accordPopulate();
   checkSearchResultIsNone();
 }
