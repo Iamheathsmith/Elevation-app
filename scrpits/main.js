@@ -24,6 +24,7 @@ function SearchResultsObject(name, add, hours, dis, duration, ele, rating, eleco
   this.imgUrl = imgUrl;
   this.equivdist = ed;
 }
+
 // this.distance + (7.92*this.elecomp)
 function initMap(e) {
   e.preventDefault();
@@ -57,16 +58,15 @@ function initMap(e) {
 
         let request = {
           location: pos,
-          // rankBy: google.maps.places.RankBy.DISTANCE,
-          radius: '800', //in meters
-          // name: [$('#search-name').val()],//search by name
+          rankBy: google.maps.places.RankBy.DISTANCE,
+          // radius: '800', //in meters
+          // name: [$('#search').val()],//search by name
           // type: [$('#search-type').val()],// search by type
           keyword: [$('#search').val()]// search by keyword
         };
 
         // For every input log to History Tab
         let now = Date().split(' ').slice(0, 5).join(' ');
-        //searchHistory += `${now}- ${$('#search').val()} <br> `;
         localStorage.searchHistory += `${now}- ${$('#search').val()} <br> `;
 
         let service = new google.maps.places.PlacesService(map);
@@ -87,13 +87,14 @@ function initMap(e) {
 
 function processResults(results, status) {
   if (status === google.maps.places.PlacesServiceStatus.OK) {
-    for (let i = 0; i < results.length; i++) {
+    for (let i = 0; i < 10; i++) {
       createMarker(results[i])
       des.push({
         lat: results[i].geometry.location.lat(),
-        lng: results[i].geometry.location.lng()
+        lng: results[i].geometry.location.lng(),
       })
-      searchResults.push(new SearchResultsObject(results[i].name, results[i].vicinity, null, 0, 0, 0, results[i].rating,0));
+      searchResults.push(new SearchResultsObject(results[i].name, results[i].vicinity, null, 0, 0, 0, null,0));
+      searchResults[i].rating = (results[i].rating) ? results[i].rating : 'no raiting Available';
       searchResults[i].imgUrl = (results[i].photos) ? results[i].photos[0].getUrl({maxWidth: 1000}) : 'img/Sorry-Image-Not-Available.png';
     }
     // console.log(results);
@@ -120,7 +121,7 @@ function centerMarker() {
 
 function createMarker(place) {
   let service = new google.maps.places.PlacesService(map);
-  // let infoWindow = new google.maps.InfoWindow();
+  let infoWindow = new google.maps.InfoWindow();
 
   service.getDetails({
     placeId: place.place_id
@@ -131,13 +132,9 @@ function createMarker(place) {
         map: map,
       });
       // console.log(place);
-      let infoWindow = new google.maps.InfoWindow();
       let today = new Date();
-      let weekday = today.getDay() || 7-1;
-      // console.log(today);
-      // console.log(weekday);
+      let weekday = !today.getDay() ? 6 : today.getDay() - 1;
       let hourTest = (place.opening_hours) ? (place.opening_hours.weekday_text[weekday]) : 'No Hours Provided'
-
       infoWindow.setContent('<div id="name">' + place.name + '</div>' +
         'Address: ' + place.formatted_address + '<br>' +
         'Hours: ' + hourTest + '<br>' + 'Phone: '+ place.formatted_phone_number + '<br>' + '</div>');
@@ -161,12 +158,12 @@ function distanceLocation(distance) {
     distance.getDistanceMatrix({
       origins: [pos],
       destinations: [des[i]],
-      travelMode: google.maps.TravelMode.DRIVING,
+      travelMode: google.maps.TravelMode.WALKING,
       unitSystem: google.maps.UnitSystem.IMPERIAL,
     }, function(results, err){
       searchResults[i].distance =  Number((results.rows[0].elements[0].distance.text).substr(0,(results.rows[0].elements[0].distance.text).length-3));
       searchResults[i].duration =  Number((results.rows[0].elements[0].duration.text).substr(0,(results.rows[0].elements[0].duration.text).length-5));
-      if (i == searchResults.length) {statusD = true;} ;
+      if (i == searchResults.length) {statusD = true;}
     })
   }
   return statusD;
@@ -179,8 +176,8 @@ function displayLocationElevation(elevator) {
       locations: [des[i]],
     }, function(response, err){
       searchResults[i].elevation =  Math.floor(response[0].elevation*3.28);
-      searchResults[i].elevationcomp =  searchResults[i].elevation - elevPos;
-      if (i == searchResults.length) {statusE = true;} ;
+      searchResults[i].elevationcomp = searchResults[i].elevation - elevPos;
+      if (i == searchResults.length) {statusE = true;}
     });
   }
   return statusE;

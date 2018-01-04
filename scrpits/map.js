@@ -95,9 +95,6 @@ mapMake.mapCreate = function(){
         }
       ]
     });
-
-
-    infoWindow = new google.maps.InfoWindow();
   }
   module.mapMake = mapMake;
 
