@@ -176,7 +176,7 @@ function displayLocationElevation(elevator) {
   return statusE;
 }
 
-// removing items that are over .6 miles away
+// removing items that are over .6 miles awayive
 function removeItems() {
   for (let i = 0; i < searchResults.length; i++) {
     if (searchResults[i].equivdist > 0.6) {

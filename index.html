@@ -5,6 +5,15 @@
     <title>Geolocation</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Easy walks" >
+    <meta property="og:url" content="https://iamheathsmith.github.io/Elevation-app/" >
+    <meta property="og:type" content="website" >
+    <meta property="og:image" content="https://iamheathsmith.github.io/Elevation-app/img/FINAL1.jpeg" >
+    <meta property="og:description" content="A app that lets you find the nearest place to you with the least amount of elevation change. Its here to make your life easy">
+    <meta property="og:locale" content="en_us" >
+    <meta property="og:site_name" content="Easy Walks" >
+    <!-- END Open Graph -->
     <link href="https://fonts.googleapis.com/css?family=Josefin+Sans" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href=styles/reset.css>
     <link rel="stylesheet" type="text/css" href=styles/base.css>
@@ -22,10 +31,10 @@
         <div><img class="search-img" src="{{imgUrl}}"></div>
         <div class="line-info"><span class="icon-office"></span><a href="https://www.google.com/maps/?q={{address}}">{{address}}</a></div>
         <div class="line-info"><span class="icon-arrow-up-right2"></span>
-          <h2> The elevation difference is: {{elevationcomp}} feet</h2></div>
+          <h2>Elevation difference: {{elevationcomp}} feet</h2></div>
         <div class="line-info"><span class="last-div icon-bullhorn"></span>
           <h2> Rating: {{rating}}</h2></div>
-          <div><h2>Hours: {{storeHours}}</h2></div>
+          <div><span class="icon-clock2"></span><h2 id="hour">Hours: {{storeHours}}</h2></div>
       </div>
     </script>
 
