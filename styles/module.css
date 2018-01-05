@@ -22,6 +22,7 @@
   background-color: white;
   outline: 1px black solid;
   margin: 0 auto;
+  margin-top: 3px;
 }
 
 /* the result images */
@@ -181,4 +182,8 @@
 
 #name {
   font-weight: bold;
+}
+
+#hour {
+  margin-left: 5px;
 }
