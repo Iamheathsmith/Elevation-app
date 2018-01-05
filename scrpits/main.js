@@ -12,7 +12,7 @@ let hours = [];
 localStorage.setItem('searchHistory','');
 let searchResults = [];
 
-function SearchResultsObject(name, add, hours, dis, duration, ele, rating, elecomp, imgUrl,ed) {
+function SearchResultsObject(name, add, hours, dis, duration, ele, rating, elecomp, imgUrl, ed, placeId) {
   this.name = name;
   this.address = add;
   this.storeHours = hours
@@ -23,11 +23,11 @@ function SearchResultsObject(name, add, hours, dis, duration, ele, rating, eleco
   this.elevationcomp = elecomp;
   this.imgUrl = imgUrl;
   this.equivdist = ed;
+  this.placeId = placeId;
 }
 
 function initMap(e) {
   e.preventDefault();
-
   app.mapMake.mapCreate();
 
   // Try HTML5 geolocation.
@@ -38,46 +38,55 @@ function initMap(e) {
           lat: position.coords.latitude,
           lng: position.coords.longitude
         };
-        // empty the handlebars and results
-        des = [];
-        searchResults = [];
-        $('.search-details').empty();
-
-        var elevator = new google.maps.ElevationService;
-        getElevationPos(elevator);
-
-        function getElevationPos(elevator) {
-          elevator.getElevationForLocations({
-            locations: [pos],
-          }, function(response) {
-            elevPos = (Math.floor(response[0].elevation*3.28))
-          })
-        }
-
-        let request = {
-          location: pos,
-          rankBy: google.maps.places.RankBy.DISTANCE,
-          // radius: '800', //in meters
-          keyword: [$('#search').val()]// search by keyword
-        };
+        emptyArray();
+        elevatonPos();
+        searchNear();
+        centerMarker();
 
         // For every input log to History Tab
         let now = Date().split(' ').slice(0, 5).join(' ');
         localStorage.searchHistory += `${now}- ${$('#search').val()} <br> `;
 
-        let service = new google.maps.places.PlacesService(map);
-        service.nearbySearch(request, processResults);
-
-
-        centerMarker();
-      },
-      function() {
+      }, function() {
         handleLocationError(true, infoWindow, map.getCenter());
       }
     );
   } else {
     // Browser doesn't support Geolocation
     handleLocationError(false, infoWindow, map.getCenter());
+  }
+}
+
+// search near by for places
+function searchNear() {
+  let request = {
+    location: pos,
+    rankBy: google.maps.places.RankBy.DISTANCE,
+    // radius: '800', //in meters
+    keyword: [$('#search').val()]// search by keyword
+  };
+  let service = new google.maps.places.PlacesService(map);
+  service.nearbySearch(request, processResults);
+}
+
+// empty the starting array back to zero
+function emptyArray() {
+  des = [];
+  searchResults = [];
+  $('.search-details').empty();
+}
+
+// get the elevation at my locations
+function elevatonPos() {
+  var elevator = new google.maps.ElevationService;
+  getElevationPos(elevator);
+
+  function getElevationPos(elevator) {
+    elevator.getElevationForLocations({
+      locations: [pos],
+    }, function(response) {
+      elevPos = (Math.floor(response[0].elevation*3.28))
+    })
   }
 }
 
@@ -92,6 +101,7 @@ function processResults(results, status) {
       searchResults.push(new SearchResultsObject(results[i].name, results[i].vicinity, null, 0, 0, 0, null,0));
       searchResults[i].rating = (results[i].rating) ? results[i].rating : 'no raiting Available';
       searchResults[i].imgUrl = (results[i].photos) ? results[i].photos[0].getUrl({maxWidth: 1000}) : 'img/Sorry-Image-Not-Available.png';
+      searchResults[i].id = results[i].place_id;
     }
     // console.log(results);
   }
@@ -116,7 +126,6 @@ function centerMarker() {
 function createMarker(place) {
   let service = new google.maps.places.PlacesService(map);
   let infoWindow = new google.maps.InfoWindow();
-
   service.getDetails({
     placeId: place.place_id
   }, function(place, status) {
@@ -192,8 +201,7 @@ function equivdistCalc() {
     searchResults[i].equivdist = Number(naismith_ed.toPrecision(2));
     searchResults[i].storeHours = hours[i];
   }
-  searchResults.sort((a, b) => {return a.equivdist - b.equivdist;});
-  removeItems();
+  // searchResults.sort((a, b) => {return a.equivdist - b.equivdist;});
   app.view.accordPopulate();
   checkSearchResultIsNone();
 }
