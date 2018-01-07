@@ -195,8 +195,21 @@ function removeItems() {
   for (let i = ordSearchResults.length -1; i >= 0; i--) {
     let test = ordSearchResults[i].distance;
     if (ordSearchResults[i].equivdist >= 0.6 && test.indexOf('mi') !== -1) {
-      console.log(ordSearchResults[i].name);
+      // console.log(ordSearchResults[i].name);
       ordSearchResults.splice(i,1);
+    }
+  }
+  addUnits();
+}
+
+function addUnits() {
+  for (let i = ordSearchResults.length -1; i >= 0; i--) {
+    let unit = ordSearchResults[i].equivdist.toString();
+    let test = ordSearchResults[i].distance;
+    if (test.indexOf('mi') !== -1) {
+      ordSearchResults[i].equivdist = unit.concat(' Miles');
+    } else {
+      ordSearchResults[i].equivdist = unit.concat(' Feet');
     }
   }
 }
@@ -207,7 +220,7 @@ function equivdistCalc() {
     let test = searchResults[i].distance;
     if (test.indexOf('ft') !== -1) {
       ordSearchResults.push(searchResults[i]);
-      console.log('this has feet');
+      // console.log('this has feet');
     }
     let naismith_ed = ((((Number((searchResults[i].distance).substr(0,(searchResults[i].distance).length-3))*1.6) + (7.92*Math.abs(searchResults[i].elevationcomp*.3048/1000))))*0.62);
     searchResults[i].equivdist = Number(naismith_ed.toPrecision(2));
@@ -215,11 +228,11 @@ function equivdistCalc() {
   }
   searchResults.sort((a, b) => {return a.equivdist - b.equivdist;});
   ordSearchResults = ordSearchResults.concat(searchResults);
-  console.log(ordSearchResults);
+  // console.log(ordSearchResults);
   removedups();
   removeItems();
-  app.view.accordPopulate();
   checkSearchResultIsNone();
+  app.view.accordPopulate();
 }
 
 // remove duplicate items
@@ -233,7 +246,7 @@ function removedups() {
     }
   });
   ordSearchResults = finalSearchResults;
-  console.log(finalSearchResults);
+  // console.log(finalSearchResults);
 }
 
 
