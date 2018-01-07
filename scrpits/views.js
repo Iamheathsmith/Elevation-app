@@ -17,7 +17,7 @@ var app = app || {};
     $('#side-image').show();
 
     let template = Handlebars.compile($('#results-template').text());
-    searchResults.map(place => {$('.search-details').append(template(place));})
+    ordSearchResults.map(place => {$('.search-details').append(template(place));})
 
     // adding the eventListener to each button
     var acc = $('.accordion');

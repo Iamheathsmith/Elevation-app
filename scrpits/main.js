@@ -8,6 +8,7 @@ let elevPos = {};
 let statusE = false;
 let statusD = false;
 let hours = [];
+let ordSearchResults = [];
 
 localStorage.setItem('searchHistory','');
 let searchResults = [];
@@ -73,6 +74,7 @@ function searchNear() {
 function emptyArray() {
   des = [];
   searchResults = [];
+  ordSearchResults = [];
   $('.search-details').empty();
 }
 
@@ -163,7 +165,10 @@ function distanceLocation(distance) {
       travelMode: google.maps.TravelMode.WALKING,
       unitSystem: google.maps.UnitSystem.IMPERIAL,
     }, function(results) {
-      searchResults[i].distance = Number((results.rows[0].elements[0].distance.text).substr(0,(results.rows[0].elements[0].distance.text).length-3));
+      searchResults[i].distance = results.rows[0].elements[0].distance.text;
+      // console.log(results.rows[0].elements[0].distance.text);
+      // console.log(Number((searchResults[i].distance).substr(0,(searchResults[i].distance).length-3)));
+      Number((results.rows[0].elements[0].distance.text).substr(0,(results.rows[0].elements[0].distance.text).length-3));
       searchResults[i].duration = Number((results.rows[0].elements[0].duration.text).substr(0,(results.rows[0].elements[0].duration.text).length-5));
       if (i === searchResults.length) {statusD = true;}
     })
@@ -187,9 +192,11 @@ function displayLocationElevation(elevator) {
 
 // removing items that are over .6 miles awayive
 function removeItems() {
-  for (let i = 0; i < searchResults.length; i++) {
-    if (searchResults[i].equivdist > 0.6) {
-      searchResults.splice(i);
+  for (let i = ordSearchResults.length -1; i >= 0; i--) {
+    let test = ordSearchResults[i].distance;
+    if (ordSearchResults[i].equivdist >= 0.6 && test.indexOf('mi') !== -1) {
+      console.log(ordSearchResults[i].name);
+      ordSearchResults.splice(i,1);
     }
   }
 }
@@ -197,14 +204,35 @@ function removeItems() {
 // applying Naismiths formula
 function equivdistCalc() {
   for (let i = 0; i < searchResults.length; i++) {
-    let naismith_ed = ((((searchResults[i].distance*1.6) + (7.92*Math.abs(searchResults[i].elevationcomp*.3048/1000))))*0.62);
+    let test = searchResults[i].distance;
+    if (test.indexOf('ft') !== -1) {
+      ordSearchResults.push(searchResults[i]);
+      console.log('this has feet');
+    }
+    let naismith_ed = ((((Number((searchResults[i].distance).substr(0,(searchResults[i].distance).length-3))*1.6) + (7.92*Math.abs(searchResults[i].elevationcomp*.3048/1000))))*0.62);
     searchResults[i].equivdist = Number(naismith_ed.toPrecision(2));
     searchResults[i].storeHours = hours[i];
   }
-  // searchResults.sort((a, b) => {return a.equivdist - b.equivdist;});
+  searchResults.sort((a, b) => {return a.equivdist - b.equivdist;});
+  ordSearchResults = ordSearchResults.concat(searchResults);
+  console.log(ordSearchResults);
+  // fix();
+  removeItems();
   app.view.accordPopulate();
   checkSearchResultIsNone();
 }
+
+// function fix() {
+//   console.log('test');
+//   for (let i = 0; i < ordSearchResults.length; i++) {
+//     console.log(ordSearchResults[i].id);
+//     if (ordSearchResults[i].id === ordSearchResults[i+1]) {
+//       ordSearchResults.splice(i,1);
+//       console.log(ordSearchResults);
+//     }
+//   }
+// }
+
 
 // this functions tell you if you are allowed the GPS to be accessed.
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
