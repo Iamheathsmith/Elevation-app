@@ -216,22 +216,25 @@ function equivdistCalc() {
   searchResults.sort((a, b) => {return a.equivdist - b.equivdist;});
   ordSearchResults = ordSearchResults.concat(searchResults);
   console.log(ordSearchResults);
-  // fix();
+  removedups();
   removeItems();
   app.view.accordPopulate();
   checkSearchResultIsNone();
 }
 
-// function fix() {
-//   console.log('test');
-//   for (let i = 0; i < ordSearchResults.length; i++) {
-//     console.log(ordSearchResults[i].id);
-//     if (ordSearchResults[i].id === ordSearchResults[i+1]) {
-//       ordSearchResults.splice(i,1);
-//       console.log(ordSearchResults);
-//     }
-//   }
-// }
+// remove duplicate items
+function removedups() {
+  let finalSearchResults = [];
+  let unique = {};
+  ordSearchResults.forEach(function(item) {
+    if (!unique[item.id]) {
+      finalSearchResults.push(item);
+      unique[item.id] = item;
+    }
+  });
+  ordSearchResults = finalSearchResults;
+  console.log(finalSearchResults);
+}
 
 
 // this functions tell you if you are allowed the GPS to be accessed.
