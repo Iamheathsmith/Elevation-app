@@ -77,12 +77,13 @@ var app = app || {};
     des = [];
     searchResults = [];
     ordSearchResults = [];
+    hours = [];
     $('.search-details').empty();
   }
 
   // get the elevation at my locations
   mainPage.elevatonPos = function() {
-    var elevator = new google.maps.ElevationService;
+    let elevator = new google.maps.ElevationService;
     elevator.getElevationForLocations({
       locations: [pos],
     }, function(response) {
@@ -94,7 +95,6 @@ var app = app || {};
     if (status === google.maps.places.PlacesServiceStatus.OK) {
       let conter = (results.length < 10) ? results.length : 10;
       for (let i = 0; i < conter; i++) {
-        mainPage.createMarker(results[i])
         des.push({
           lat: results[i].geometry.location.lat(),
           lng: results[i].geometry.location.lng(),
@@ -103,6 +103,7 @@ var app = app || {};
         searchResults[i].rating = (results[i].rating) ? results[i].rating : 'no raiting Available';
         searchResults[i].imgUrl = (results[i].photos) ? results[i].photos[0].getUrl({maxWidth: 1000}) : 'img/Sorry-Image-Not-Available.png';
         searchResults[i].id = results[i].place_id;
+        mainPage.getPlaceInfo(searchResults[i].id)
       }
       // console.log(results);
     }
@@ -117,40 +118,42 @@ var app = app || {};
   mainPage.centerMarker = function() {
     let marker = new google.maps.Marker({
       position: pos,
-      icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png', // image,
+      icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
       animation: google.maps.Animation.DROP,
-      map: map
+      map: app.mapMake.map
     });
     app.mapMake.map.setCenter(pos);
   }
 
-  mainPage.createMarker = function(place) {
+  mainPage.getPlaceInfo = function(place) {
     let service = new google.maps.places.PlacesService(app.mapMake.map);
-    let infoWindow = new google.maps.InfoWindow();
     service.getDetails({
-      placeId: place.place_id
-    }, function(place, status) {
+      placeId: place
+    }, function(place) {
       let today = new Date();
       let weekday = !today.getDay() ? 6 : today.getDay() - 1;
-      let hourTest = (place.opening_hours) ? (place.opening_hours.weekday_text[weekday]) : 'No Hours Provided'
+      let hourTest = (place.opening_hours) ? (place.opening_hours.weekday_text[weekday]) : 'No Hours Provided';
       hours.push(hourTest);
-      if (status === google.maps.places.PlacesServiceStatus.OK) {
-        let marker = new google.maps.Marker({
-          position: place.geometry.location,
-          map: app.mapMake.map,
-        });
-        // console.log(place);
-        infoWindow.setContent('<div id="name">' + place.name + '</div>' +
-          'Address: ' + place.formatted_address + '<br>' +
-          'Hours: ' + hourTest + '<br>' + 'Phone: '+ place.formatted_phone_number + '<br>' + '</div>');
+      mainPage.buildMarker(place);
+    });
+  }
 
-        google.maps.event.addListener(marker, 'click', function(event) {
-          infoWindow.open(map, marker);
-        });
-        google.maps.event.addListener(app.mapMake.map, 'click', function(event) {
-          infoWindow.close();
-        });
-      }
+  mainPage.buildMarker = function(place) {
+    let infoWindow = new google.maps.InfoWindow();
+    let marker = new google.maps.Marker({
+      position: place.geometry.location,
+      map: app.mapMake.map,
+    });
+
+    // console.log(place);
+    infoWindow.setContent('<div id="name">' + place.name + '</div>' +
+      'Address: ' + place.formatted_address + '<br>' + 'Phone: '+ place.formatted_phone_number + '<br>' + '</div>');
+
+    google.maps.event.addListener(marker, 'click', function(event) {
+      infoWindow.open(map, marker);
+    });
+    google.maps.event.addListener(app.mapMake.map, 'click', function(event) {
+      infoWindow.close();
     });
   }
 
