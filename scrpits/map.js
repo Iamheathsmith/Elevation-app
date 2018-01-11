@@ -5,7 +5,7 @@ var app = app || {};
 const mapMake = {}
 mapMake.mapCreate = function(){
   //co-ordinates of Seattle
-    map = new google.maps.Map(document.getElementById('map'), {
+    mapMake.map = new google.maps.Map(document.getElementById('map'), {
       center: {
         lat: 47.6182,
         lng: -122.3519

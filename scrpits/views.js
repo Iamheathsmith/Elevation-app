@@ -17,7 +17,7 @@ var app = app || {};
     $('#side-image').show();
 
     let template = Handlebars.compile($('#results-template').text());
-    ordSearchResults.map(place => {$('.search-details').append(template(place));})
+    app.mainPage.ordSearchResults.map(place => {$('.search-details').append(template(place));})
 
     // adding the eventListener to each button
     var acc = $('.accordion');
@@ -65,7 +65,7 @@ var app = app || {};
 
   // button click to start search
   $('#search-btn').on('click', function(){
-    initMap(event);
+    app.mainPage.initMap(event);
     view.loadingScreen();
   })
 
