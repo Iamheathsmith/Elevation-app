@@ -136,7 +136,7 @@ var app = app || {};
       let hourTest = (place.opening_hours) ? (place.opening_hours.weekday_text[weekday]) : 'No Hours Provided';
       hours.push(hourTest);
       phone.push(place.formatted_phone_number)
-      console.log(place);
+      // console.log(place);
     });
   }
 
