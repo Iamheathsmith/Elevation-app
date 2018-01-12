@@ -13,6 +13,7 @@ var app = app || {};
   let statusD = false;
   let hours = [];
   let ordSearchResults = [];
+  let phone = [];
 
   localStorage.setItem('searchHistory','');
   let searchResults = [];
@@ -134,27 +135,30 @@ var app = app || {};
       let weekday = !today.getDay() ? 6 : today.getDay() - 1;
       let hourTest = (place.opening_hours) ? (place.opening_hours.weekday_text[weekday]) : 'No Hours Provided';
       hours.push(hourTest);
-      mainPage.buildMarker(place);
+      phone.push(place.formatted_phone_number)
+      console.log(place);
     });
   }
 
   mainPage.buildMarker = function(place) {
-    let infoWindow = new google.maps.InfoWindow();
-    let marker = new google.maps.Marker({
-      position: place.geometry.location,
-      map: app.mapMake.map,
-    });
+    for (var i = 0; i < ordSearchResults.length; i++) {
+      let infoWindow = new google.maps.InfoWindow();
+      let marker = new google.maps.Marker({
+        position: ordSearchResults[i].latLog,
+        map: app.mapMake.map,
+      });
 
-    // console.log(place);
-    infoWindow.setContent('<div id="name">' + place.name + '</div>' +
-      'Address: ' + place.formatted_address + '<br>' + 'Phone: '+ place.formatted_phone_number + '<br>' + '</div>');
+      // console.log(ordSearchResults);
+      let linkAddress = '<a href="https://www.google.com/maps/?q=('+ ordSearchResults[i].address +')">View on Google Maps</a>'
+      infoWindow.setContent('<div id="name">' + ordSearchResults[i].name + '</div>' + '<div id="infoWindow">' + ordSearchResults[i].address + '<br>' + linkAddress + '<br>' + '</div>');
 
-    google.maps.event.addListener(marker, 'click', function(event) {
-      infoWindow.open(map, marker);
-    });
-    google.maps.event.addListener(app.mapMake.map, 'click', function(event) {
-      infoWindow.close();
-    });
+      google.maps.event.addListener(marker, 'click', function(event) {
+        infoWindow.open(map, marker);
+      });
+      google.maps.event.addListener(app.mapMake.map, 'click', function(event) {
+        infoWindow.close();
+      });
+    }
   }
 
   //calculate distance
@@ -171,6 +175,7 @@ var app = app || {};
         searchResults[i].duration = Number((results.rows[0].elements[0].duration.text).substr(0,(results.rows[0].elements[0].duration.text).length-5));
         if (i === searchResults.length) {statusD = true;}
       })
+      searchResults[i].latLog = des[i];
     }
     return statusD;
   }
@@ -209,6 +214,9 @@ var app = app || {};
       } else {
         ordSearchResults[i].equivdist = unit.concat(' Feet');
       }
+      if (ordSearchResults[i].latLog) {
+        mainPage.buildMarker(ordSearchResults[i].id);
+      }
     }
   }
 
@@ -222,6 +230,7 @@ var app = app || {};
       let naismith_ed = ((((Number((searchResults[i].distance).substr(0,(searchResults[i].distance).length-3))*1.6) + (7.92*Math.abs(searchResults[i].elevationcomp*.3048/1000))))*0.62);
       searchResults[i].equivdist = Number(naismith_ed.toPrecision(2));
       searchResults[i].storeHours = hours[i];
+      searchResults[i].phone = phone[i];
     }
     searchResults.sort((a, b) => {return a.equivdist - b.equivdist;});
     ordSearchResults = ordSearchResults.concat(searchResults);

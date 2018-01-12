@@ -10,7 +10,7 @@ var app = app || {};
         lat: 47.6182,
         lng: -122.3519
       },
-      zoom: 15,
+      zoom: 14,
       zoomControl: true,
       disableDefaultUI: true,
       draggable: true,
