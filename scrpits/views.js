@@ -2,7 +2,8 @@
 
 var app = app || {};
 (function(module) {
-  const view = {}
+  const view = {};
+  let item = {};
 
   $('#pokemon, #side-image').hide();
 
@@ -30,8 +31,20 @@ var app = app || {};
         } else {
           $('.panel').slideUp(300);
           $(this.nextElementSibling).slideDown(200);
+          item = this.firstChild.innerHTML;
+          view.highLightMarker();
         }
       });
+    }
+  }
+
+  view.highLightMarker = function() {
+    for (var i = 0; i < app.mainPage.markers.length; i++) {
+      if (app.mainPage.markers[i].name === item) {
+        app.mainPage.markers[i].setIcon('http://maps.gstatic.com/mapfiles/ms2/micons/blue.png')
+      } else {
+        app.mainPage.markers[i].setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png')
+      }
     }
   }
 
