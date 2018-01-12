@@ -14,6 +14,7 @@ var app = app || {};
   let hours = [];
   let ordSearchResults = [];
   let phone = [];
+  let markers = [];
 
   localStorage.setItem('searchHistory','');
   let searchResults = [];
@@ -113,7 +114,7 @@ var app = app || {};
     let elevator = new google.maps.ElevationService;
     statusE = mainPage.displayLocationElevation(elevator);
 
-    setTimeout(mainPage.equivdistCalc, 500);
+    setTimeout(mainPage.equivdistCalc, 1000);
   }
 
   mainPage.centerMarker = function() {
@@ -141,13 +142,15 @@ var app = app || {};
   }
 
   mainPage.buildMarker = function(place) {
+    let tempMarkers = [];
     for (var i = 0; i < ordSearchResults.length; i++) {
       let infoWindow = new google.maps.InfoWindow();
       let marker = new google.maps.Marker({
         position: ordSearchResults[i].latLog,
         map: app.mapMake.map,
+        icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+        name: ordSearchResults[i].name,
       });
-
       // console.log(ordSearchResults);
       let linkAddress = '<a href="https://www.google.com/maps/?q=('+ ordSearchResults[i].address +')">View on Google Maps</a>'
       infoWindow.setContent('<div id="name">' + ordSearchResults[i].name + '</div>' + '<div id="infoWindow">' + ordSearchResults[i].address + '<br>' + linkAddress + '<br>' + '</div>');
@@ -158,7 +161,10 @@ var app = app || {};
       google.maps.event.addListener(app.mapMake.map, 'click', function(event) {
         infoWindow.close();
       });
+      tempMarkers.push(marker);
     }
+    markers = tempMarkers;
+    mainPage.markers = markers;
   }
 
   //calculate distance
