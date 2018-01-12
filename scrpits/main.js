@@ -13,6 +13,7 @@ var app = app || {};
   let statusD = false;
   let hours = [];
   let ordSearchResults = [];
+  let phone = [];
 
   localStorage.setItem('searchHistory','');
   let searchResults = [];
@@ -77,12 +78,13 @@ var app = app || {};
     des = [];
     searchResults = [];
     ordSearchResults = [];
+    hours = [];
     $('.search-details').empty();
   }
 
   // get the elevation at my locations
   mainPage.elevatonPos = function() {
-    var elevator = new google.maps.ElevationService;
+    let elevator = new google.maps.ElevationService;
     elevator.getElevationForLocations({
       locations: [pos],
     }, function(response) {
@@ -94,7 +96,6 @@ var app = app || {};
     if (status === google.maps.places.PlacesServiceStatus.OK) {
       let conter = (results.length < 10) ? results.length : 10;
       for (let i = 0; i < conter; i++) {
-        mainPage.createMarker(results[i])
         des.push({
           lat: results[i].geometry.location.lat(),
           lng: results[i].geometry.location.lng(),
@@ -103,6 +104,7 @@ var app = app || {};
         searchResults[i].rating = (results[i].rating) ? results[i].rating : 'no raiting Available';
         searchResults[i].imgUrl = (results[i].photos) ? results[i].photos[0].getUrl({maxWidth: 1000}) : 'img/Sorry-Image-Not-Available.png';
         searchResults[i].id = results[i].place_id;
+        mainPage.getPlaceInfo(searchResults[i].id)
       }
       // console.log(results);
     }
@@ -117,41 +119,46 @@ var app = app || {};
   mainPage.centerMarker = function() {
     let marker = new google.maps.Marker({
       position: pos,
-      icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png', // image,
+      icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
       animation: google.maps.Animation.DROP,
-      map: map
+      map: app.mapMake.map
     });
     app.mapMake.map.setCenter(pos);
   }
 
-  mainPage.createMarker = function(place) {
+  mainPage.getPlaceInfo = function(place) {
     let service = new google.maps.places.PlacesService(app.mapMake.map);
-    let infoWindow = new google.maps.InfoWindow();
     service.getDetails({
-      placeId: place.place_id
-    }, function(place, status) {
+      placeId: place
+    }, function(place) {
       let today = new Date();
       let weekday = !today.getDay() ? 6 : today.getDay() - 1;
-      let hourTest = (place.opening_hours) ? (place.opening_hours.weekday_text[weekday]) : 'No Hours Provided'
+      let hourTest = (place.opening_hours) ? (place.opening_hours.weekday_text[weekday]) : 'No Hours Provided';
       hours.push(hourTest);
-      if (status === google.maps.places.PlacesServiceStatus.OK) {
-        let marker = new google.maps.Marker({
-          position: place.geometry.location,
-          map: app.mapMake.map,
-        });
-        // console.log(place);
-        infoWindow.setContent('<div id="name">' + place.name + '</div>' +
-          'Address: ' + place.formatted_address + '<br>' +
-          'Hours: ' + hourTest + '<br>' + 'Phone: '+ place.formatted_phone_number + '<br>' + '</div>');
-
-        google.maps.event.addListener(marker, 'click', function(event) {
-          infoWindow.open(map, marker);
-        });
-        google.maps.event.addListener(app.mapMake.map, 'click', function(event) {
-          infoWindow.close();
-        });
-      }
+      phone.push(place.formatted_phone_number)
+      // console.log(place);
     });
+  }
+
+  mainPage.buildMarker = function(place) {
+    for (var i = 0; i < ordSearchResults.length; i++) {
+      let infoWindow = new google.maps.InfoWindow();
+      let marker = new google.maps.Marker({
+        position: ordSearchResults[i].latLog,
+        map: app.mapMake.map,
+      });
+
+      // console.log(ordSearchResults);
+      let linkAddress = '<a href="https://www.google.com/maps/?q=('+ ordSearchResults[i].address +')">View on Google Maps</a>'
+      infoWindow.setContent('<div id="name">' + ordSearchResults[i].name + '</div>' + '<div id="infoWindow">' + ordSearchResults[i].address + '<br>' + linkAddress + '<br>' + '</div>');
+
+      google.maps.event.addListener(marker, 'click', function(event) {
+        infoWindow.open(map, marker);
+      });
+      google.maps.event.addListener(app.mapMake.map, 'click', function(event) {
+        infoWindow.close();
+      });
+    }
   }
 
   //calculate distance
@@ -168,6 +175,7 @@ var app = app || {};
         searchResults[i].duration = Number((results.rows[0].elements[0].duration.text).substr(0,(results.rows[0].elements[0].duration.text).length-5));
         if (i === searchResults.length) {statusD = true;}
       })
+      searchResults[i].latLog = des[i];
     }
     return statusD;
   }
@@ -206,6 +214,9 @@ var app = app || {};
       } else {
         ordSearchResults[i].equivdist = unit.concat(' Feet');
       }
+      if (ordSearchResults[i].latLog) {
+        mainPage.buildMarker(ordSearchResults[i].id);
+      }
     }
   }
 
@@ -219,6 +230,7 @@ var app = app || {};
       let naismith_ed = ((((Number((searchResults[i].distance).substr(0,(searchResults[i].distance).length-3))*1.6) + (7.92*Math.abs(searchResults[i].elevationcomp*.3048/1000))))*0.62);
       searchResults[i].equivdist = Number(naismith_ed.toPrecision(2));
       searchResults[i].storeHours = hours[i];
+      searchResults[i].phone = phone[i];
     }
     searchResults.sort((a, b) => {return a.equivdist - b.equivdist;});
     ordSearchResults = ordSearchResults.concat(searchResults);
