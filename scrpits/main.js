@@ -166,6 +166,22 @@ var app = app || {};
     }
     markers = tempMarkers;
     mainPage.markers = markers;
+    setTimeout(mainPage.zoomeExtends(), 500);
+    console.log(app.mapMake.map.getZoom());
+  }
+
+  mainPage.zoomeExtends = function(){
+    let bounds = new google.maps.LatLngBounds();
+    if (markers.length > 0) {
+      for (var i = 0; i < markers.length; i++) {
+        bounds.extend(markers[i].getPosition());
+      }
+      app.mapMake.map.fitBounds(bounds);
+    }
+    if(app.mapMake.map.getZoom()> 15){
+      app.mapMake.map.setZoom(12);
+      app.mapMake.map.setCenter(bounds.getCenter(pos));
+    }
   }
 
   //calculate distance
