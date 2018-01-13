@@ -131,6 +131,9 @@
   width: 90%;
   height: 60%;
 }
+ #space {
+   height: 60px;
+ }
 
 #info {
   width: 70%;
@@ -196,4 +199,13 @@
 
 #hour {
   margin-left: 5px;
+}
+
+#foot {
+  position: fixed;
+  left: 0px;
+  bottom: 0px;
+  height: 40px;
+  width: 100%;
+  background: lightgrey;
 }
