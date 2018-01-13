@@ -205,7 +205,8 @@ var app = app || {};
   mainPage.removeItems = function() {
     for (let i = ordSearchResults.length -1; i >= 0; i--) {
       let test = ordSearchResults[i].distance;
-      if (ordSearchResults[i].equivdist >= 0.99 && test.indexOf('mi') !== -1) {
+      let dis = $('input[name="ans1"]:checked').val() ? $('input[name="ans1"]:checked').val() : 0.99;
+      if (ordSearchResults[i].equivdist >= dis && test.indexOf('mi') !== -1) {
         ordSearchResults.splice(i,1);
       }
     }

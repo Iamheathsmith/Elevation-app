@@ -21,6 +21,7 @@
     <link rel="stylesheet" type="text/css" href="styles/module.css">
     <link rel="stylesheet" type="text/css" href="styles/icons/style.css">
     <link rel="stylesheet" type="text/css" href="styles/hamburger.css">
+    <link rel="stylesheet" type="text/css" href="styles/footer.css">
     <title>Elevation Info</title>
 
     <script id="results-template" type="text/x-handlebars-template">
@@ -95,7 +96,24 @@
     </main>
 
     <div id="map" class="container"></div>
-
+    <div id="space"></div>
+    <footer id="foot">
+      <div class="answerOuter pull-left">
+        <label for="ans1" class="option opt1 pull-left">
+            <input type="radio" name="ans1" id="ans1" value="0.50">
+            <span class="inner">0 - .5 miles</span>
+        </label>
+        <label for="ans2" class="option opt1 pull-left">
+            <input type="radio" name="ans1" id="ans2" value="0.99">
+            <span class="inner">0 - 1 miles</span>
+        </label>
+        <label for="ans3" class="option opt1 pull-left">
+            <input type="radio" name="ans1" id="ans3" value="10.0">
+            <span class="inner">Over 1 mile</span>
+        </label>
+    </div>
+    </footer>
+    $("input[name='ans1'][value='4']").prop('checked', true);
 
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFErx9fo0ANwU469jRmq5RTo35QmeSzKs&libraries=places"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
