@@ -41,9 +41,9 @@ var app = app || {};
   view.highLightMarker = function() {
     for (var i = 0; i < app.mainPage.markers.length; i++) {
       if (app.mainPage.markers[i].name === item) {
-        app.mainPage.markers[i].setIcon('http://maps.gstatic.com/mapfiles/ms2/micons/blue.png')
+        app.mainPage.markers[i].setIcon('img/blue.png')
       } else {
-        app.mainPage.markers[i].setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png')
+        app.mainPage.markers[i].setIcon('img/red-dot.png')
       }
     }
   }
@@ -84,7 +84,6 @@ var app = app || {};
 
   // for main page
   $('.home').on('click', function(){
-    // location.reload(); // this is for reseting the map
     $('.container').hide();
     $('#pokemon, #side-image').hide();
     $('#pokemon').hide();

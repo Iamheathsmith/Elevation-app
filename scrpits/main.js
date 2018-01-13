@@ -120,7 +120,7 @@ var app = app || {};
   mainPage.centerMarker = function() {
     let marker = new google.maps.Marker({
       position: pos,
-      icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+      icon: 'img/green-dot.png',
       animation: google.maps.Animation.DROP,
       map: app.mapMake.map
     });
@@ -136,7 +136,7 @@ var app = app || {};
       let weekday = !today.getDay() ? 6 : today.getDay() - 1;
       let hourTest = (place.opening_hours) ? (place.opening_hours.weekday_text[weekday]) : 'No Hours Provided';
       hours.push(hourTest);
-      phone.push(place.formatted_phone_number)
+      phone.push((place.formatted_phone_number) ? place.formatted_phone_number : 'No phone Number' )
       // console.log(place);
     });
   }
@@ -144,18 +144,19 @@ var app = app || {};
   mainPage.buildMarker = function(place) {
     let tempMarkers = [];
     for (var i = 0; i < ordSearchResults.length; i++) {
-      let infoWindow = new google.maps.InfoWindow();
       let marker = new google.maps.Marker({
         position: ordSearchResults[i].latLog,
         map: app.mapMake.map,
-        icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+        icon: 'img/red-dot.png',
         name: ordSearchResults[i].name,
       });
       // console.log(ordSearchResults);
       let linkAddress = '<a href="https://www.google.com/maps/?q=('+ ordSearchResults[i].address +')">View on Google Maps</a>'
-      infoWindow.setContent('<div id="name">' + ordSearchResults[i].name + '</div>' + '<div id="infoWindow">' + ordSearchResults[i].address + '<br>' + linkAddress + '<br>' + '</div>');
+      let infoWindow = new google.maps.InfoWindow({
+        Content: '<div id="name">' + ordSearchResults[i].name + '</div>' + '<div id="infoWindow">' + ordSearchResults[i].address + '<br>' + linkAddress + '<br>' + '</div>'
+      });
 
-      google.maps.event.addListener(marker, 'click', function(event) {
+      google.maps.event.addListener(marker, 'click', function(event) {i
         infoWindow.open(map, marker);
       });
       google.maps.event.addListener(app.mapMake.map, 'click', function(event) {
