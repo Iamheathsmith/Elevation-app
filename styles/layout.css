@@ -1,4 +1,4 @@
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 650px) {
 
   .search-details {
     max-width: 40%;
@@ -7,8 +7,14 @@
     float: left !important;
   }
 
-  #side-image {
+  /* #side-image {
     width: 45%;
+    margin-bottom: 20px;
+  } */
+
+  .mapSide {
+    width: 45% !important;
+    height: 80% !important;
     margin-bottom: 20px;
   }
 }
