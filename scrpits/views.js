@@ -14,8 +14,9 @@ var app = app || {};
     $('search').empty();
     $('.main').show();
     $('#pokemon').hide();
+    $('#map').addClass('mapSide')
     $('#searchHistory').hide();
-    $('#side-image').show();
+    $('.mapSide').show();
 
     let template = Handlebars.compile($('#results-template').text());
     app.mainPage.ordSearchResults.map(place => {
@@ -53,6 +54,7 @@ var app = app || {};
   // builds the loading screen
   view.loadingScreen = function() {
     $('#pokemon').show();
+    $('#map').removeClass('mapSide')
     $('#side-image').hide();
     $('.main').hide()
     $('.search-details').hide();
