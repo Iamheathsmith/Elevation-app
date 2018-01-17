@@ -153,7 +153,7 @@ var app = app || {};
         name: ordSearchResults[i].name,
       });
       // console.log(ordSearchResults);
-      let linkAddress = '<a href="https://www.google.com/maps/?q=(' + ordSearchResults[i].address + ')">View on Google Maps</a>'
+      let linkAddress = '<a href="https://www.google.com/maps/dir/?api=1&origin=' + pos + '&destination=QVB&destination_place_id=' + ordSearchResults[i].id + '&travelmode=walking">View on Google Maps</a>'
       let infoWindow = new google.maps.InfoWindow({
         Content: '<div id="name">' + ordSearchResults[i].name + '</div>' + '<div id="infoWindow">' + ordSearchResults[i].address + '<br>' + linkAddress + '<br>' + '</div>'
       });
