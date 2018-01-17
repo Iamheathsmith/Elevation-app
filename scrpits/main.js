@@ -16,13 +16,12 @@ var app = app || {};
   let phone = [];
   let markers = [];
 
-  localStorage.setItem('searchHistory','');
+  localStorage.setItem('searchHistory', '');
   let searchResults = [];
 
-  mainPage.SearchResultsObject = function(name, add, hours, dis, duration, ele, rating, elecomp, imgUrl, ed) {
+  mainPage.SearchResultsObject = function(name, add, dis, duration, ele, rating, elecomp, imgUrl, ed) {
     this.name = name;
     this.address = add;
-    this.storeHours = hours
     this.distance = dis;
     this.duration = duration;
     this.elevation = ele;
@@ -53,7 +52,8 @@ var app = app || {};
           let now = Date().split(' ').slice(0, 5).join(' ');
           localStorage.searchHistory += `${now}- ${$('#search').val()} <br> `;
 
-        }, function() {
+        },
+        function() {
           mainPage.handleLocationError(true, infoWindow, map.getCenter());
         }
       );
@@ -68,7 +68,7 @@ var app = app || {};
     let request = {
       location: pos,
       rankBy: google.maps.places.RankBy.DISTANCE,
-      keyword: [$('#search').val()]// search by keyword
+      keyword: [$('#search').val()] // search by keyword
     };
     let service = new google.maps.places.PlacesService(app.mapMake.map);
     service.nearbySearch(request, mainPage.processResults);
@@ -76,10 +76,10 @@ var app = app || {};
 
   // empty the starting array back to zero
   mainPage.emptyArray = function() {
+    hours = [];
     des = [];
     searchResults = [];
     ordSearchResults = [];
-    hours = [];
     $('.search-details').empty();
   }
 
@@ -89,7 +89,7 @@ var app = app || {};
     elevator.getElevationForLocations({
       locations: [pos],
     }, function(response) {
-      elevPos = (Math.floor(response[0].elevation*3.28))
+      elevPos = (Math.floor(response[0].elevation * 3.28))
     })
   }
 
@@ -101,9 +101,11 @@ var app = app || {};
           lat: results[i].geometry.location.lat(),
           lng: results[i].geometry.location.lng(),
         })
-        searchResults.push(new mainPage.SearchResultsObject(results[i].name, results[i].vicinity, null, 0, 0, 0, null,0));
+        searchResults.push(new mainPage.SearchResultsObject(results[i].name, results[i].vicinity, null, 0, 0, 0, null, 0));
         searchResults[i].rating = (results[i].rating) ? results[i].rating : 'no raiting Available';
-        searchResults[i].imgUrl = (results[i].photos) ? results[i].photos[0].getUrl({maxWidth: 1000}) : 'img/Sorry-Image-Not-Available.png';
+        searchResults[i].imgUrl = (results[i].photos) ? results[i].photos[0].getUrl({
+          maxWidth: 1000
+        }) : 'img/Sorry-Image-Not-Available.png';
         searchResults[i].id = results[i].place_id;
         mainPage.getPlaceInfo(searchResults[i].id)
       }
@@ -136,7 +138,7 @@ var app = app || {};
       let weekday = !today.getDay() ? 6 : today.getDay() - 1;
       let hourTest = (place.opening_hours) ? (place.opening_hours.weekday_text[weekday]) : 'No Hours Provided';
       hours.push(hourTest);
-      phone.push((place.formatted_phone_number) ? place.formatted_phone_number : 'No phone Number' )
+      phone.push((place.formatted_phone_number) ? place.formatted_phone_number : 'No phone Number')
       // console.log(place);
     });
   }
@@ -151,12 +153,13 @@ var app = app || {};
         name: ordSearchResults[i].name,
       });
       // console.log(ordSearchResults);
-      let linkAddress = '<a href="https://www.google.com/maps/?q=('+ ordSearchResults[i].address +')">View on Google Maps</a>'
+      let linkAddress = '<a href="https://www.google.com/maps/?q=(' + ordSearchResults[i].address + ')">View on Google Maps</a>'
       let infoWindow = new google.maps.InfoWindow({
         Content: '<div id="name">' + ordSearchResults[i].name + '</div>' + '<div id="infoWindow">' + ordSearchResults[i].address + '<br>' + linkAddress + '<br>' + '</div>'
       });
 
-      google.maps.event.addListener(marker, 'click', function(event) {i
+      google.maps.event.addListener(marker, 'click', function(event) {
+        i
         infoWindow.open(map, marker);
       });
       google.maps.event.addListener(app.mapMake.map, 'click', function(event) {
@@ -166,10 +169,11 @@ var app = app || {};
     }
     markers = tempMarkers;
     mainPage.markers = markers;
-    setTimeout(mainPage.zoomeExtends(), 500);
+    mainPage.zoomeExtends();
+    // setTimeout(mainPage.zoomeExtends(), 0);
   }
 
-  mainPage.zoomeExtends = function(){
+  mainPage.zoomeExtends = function() {
     let bounds = new google.maps.LatLngBounds();
     if (markers.length > 0) {
       for (var i = 0; i < markers.length; i++) {
@@ -178,7 +182,7 @@ var app = app || {};
       bounds.extend(pos);
       app.mapMake.map.fitBounds(bounds);
     }
-    if (app.mapMake.map.getZoom()> 15){
+    if (app.mapMake.map.getZoom() > 15) {
       app.mapMake.map.setZoom(15);
       app.mapMake.map.setCenter(bounds.getCenter(pos));
     }
@@ -194,9 +198,11 @@ var app = app || {};
         unitSystem: google.maps.UnitSystem.IMPERIAL,
       }, function(results) {
         searchResults[i].distance = results.rows[0].elements[0].distance.text;
-        Number((results.rows[0].elements[0].distance.text).substr(0,(results.rows[0].elements[0].distance.text).length-3));
-        searchResults[i].duration = Number((results.rows[0].elements[0].duration.text).substr(0,(results.rows[0].elements[0].duration.text).length-5));
-        if (i === searchResults.length) {statusD = true;}
+        Number((results.rows[0].elements[0].distance.text).substr(0, (results.rows[0].elements[0].distance.text).length - 3));
+        searchResults[i].duration = Number((results.rows[0].elements[0].duration.text).substr(0, (results.rows[0].elements[0].duration.text).length - 5));
+        if (i === searchResults.length) {
+          statusD = true;
+        }
       })
       searchResults[i].latLog = des[i];
     }
@@ -209,9 +215,11 @@ var app = app || {};
       elevator.getElevationForLocations({
         locations: [des[i]],
       }, function(response) {
-        searchResults[i].elevation = Math.floor(response[0].elevation*3.28);
+        searchResults[i].elevation = Math.floor(response[0].elevation * 3.28);
         searchResults[i].elevationcomp = searchResults[i].elevation - elevPos;
-        if (i === searchResults.length) {statusE = true;}
+        if (i === searchResults.length) {
+          statusE = true;
+        }
       });
     }
     return statusE;
@@ -219,18 +227,18 @@ var app = app || {};
 
   // removing items that are over .6 miles awayive
   mainPage.removeItems = function() {
-    for (let i = ordSearchResults.length -1; i >= 0; i--) {
+    for (let i = ordSearchResults.length - 1; i >= 0; i--) {
       let test = ordSearchResults[i].distance;
       let dis = $('input[name="ans1"]:checked').val() ? $('input[name="ans1"]:checked').val() : 0.99;
       if (ordSearchResults[i].equivdist >= dis && test.indexOf('mi') !== -1) {
-        ordSearchResults.splice(i,1);
+        ordSearchResults.splice(i, 1);
       }
     }
     mainPage.addUnits();
   }
 
   mainPage.addUnits = function() {
-    for (let i = ordSearchResults.length -1; i >= 0; i--) {
+    for (let i = ordSearchResults.length - 1; i >= 0; i--) {
       let unit = ordSearchResults[i].equivdist.toString();
       let test = ordSearchResults[i].distance;
       if (test.indexOf('mi') !== -1) {
@@ -251,12 +259,14 @@ var app = app || {};
       if (test.indexOf('ft') !== -1) {
         ordSearchResults.push(searchResults[i]);
       }
-      let naismith_ed = ((((Number((searchResults[i].distance).substr(0,(searchResults[i].distance).length-3))*1.6) + (7.92*Math.abs(searchResults[i].elevationcomp*.3048/1000))))*0.62);
+      let naismith_ed = ((((Number((searchResults[i].distance).substr(0, (searchResults[i].distance).length - 3)) * 1.6) + (7.92 * Math.abs(searchResults[i].elevationcomp * .3048 / 1000)))) * 0.62);
       searchResults[i].equivdist = Number(naismith_ed.toPrecision(2));
       searchResults[i].storeHours = hours[i];
       searchResults[i].phone = phone[i];
     }
-    searchResults.sort((a, b) => {return a.equivdist - b.equivdist;});
+    searchResults.sort((a, b) => {
+      return a.equivdist - b.equivdist;
+    });
     ordSearchResults = ordSearchResults.concat(searchResults);
     mainPage.removedups();
     mainPage.removeItems();
@@ -278,7 +288,6 @@ var app = app || {};
     ordSearchResults = finalSearchResults;
   }
 
-
   // this functions tell you if you are allowed the GPS to be accessed.
   mainPage.handleLocationError = function(browserHasGeolocation, infoWindow, pos) {
     infoWindow.setPosition(pos);
@@ -289,11 +298,11 @@ var app = app || {};
 
   }
 
-  mainPage.checkSearchResultIsNone = function(){
-    if (ordSearchResults.length === 0){
+  mainPage.checkSearchResultIsNone = function() {
+    if (ordSearchResults.length === 0) {
       alert('Outside of walking distance.');
     }
   }
   module.mainPage = mainPage;
 
-}) (app)
+})(app)

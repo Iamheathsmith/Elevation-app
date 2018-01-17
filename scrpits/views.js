@@ -18,7 +18,9 @@ var app = app || {};
     $('#side-image').show();
 
     let template = Handlebars.compile($('#results-template').text());
-    app.mainPage.ordSearchResults.map(place => {$('.search-details').append(template(place));})
+    app.mainPage.ordSearchResults.map(place => {
+      $('.search-details').append(template(place));
+    })
 
     // adding the eventListener to each button
     var acc = $('.accordion');
@@ -49,7 +51,7 @@ var app = app || {};
   }
 
   // builds the loading screen
-  view.loadingScreen = function(){
+  view.loadingScreen = function() {
     $('#pokemon').show();
     $('#side-image').hide();
     $('.main').hide()
@@ -59,15 +61,15 @@ var app = app || {};
   }
 
   // the hamburger MENU
-  $(document).ready(function(){
-    $('.hamburger-shell').click(function(){
+  $(document).ready(function() {
+    $('.hamburger-shell').click(function() {
       $('#menu').slideToggle(300);
       $('.top').toggleClass('rotate');
       $('.middle').toggleClass('rotate-back');
       $('.menu-name').toggleClass('bump');
       $('.bg-cover').toggleClass('reveal');
     });
-    $('.searchHistory, .about, .home').click(function(){
+    $('.searchHistory, .about, .home').click(function() {
       $('#menu').slideToggle(300);
       $('.top').toggleClass('rotate');
       $('.middle').toggleClass('rotate-back');
@@ -77,13 +79,13 @@ var app = app || {};
   });
 
   // button click to start search
-  $('#search-btn').on('click', function(){
+  $('#search-btn').on('click', function() {
     app.mainPage.initMap(event);
     view.loadingScreen();
   })
 
   // for main page
-  $('.home').on('click', function(){
+  $('.home').on('click', function() {
     $('.container').hide();
     $('#pokemon, #side-image').hide();
     $('#pokemon').hide();
@@ -93,7 +95,7 @@ var app = app || {};
   })
 
   // for the searchHistory page
-  $('.searchHistory').on('click', function(){
+  $('.searchHistory').on('click', function() {
     $('.container').hide();
     $('#searchHistory').empty();
     $('#searchHistory').html(localStorage.getItem('searchHistory'));
@@ -101,7 +103,7 @@ var app = app || {};
   })
 
   // for the about page
-  $('.about').on('click', function(){
+  $('.about').on('click', function() {
     $('.container').hide();
     $('.us').fadeIn(1000);
     $('#pokemon, #side-image').hide();
@@ -114,4 +116,4 @@ var app = app || {};
 
   module.view = view;
 
-}) (app)
+})(app)
